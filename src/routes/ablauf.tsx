@@ -10,9 +10,8 @@ export default function Page() {
         description="In 4 Schritten zum Führerschein – von der Anmeldung bis zur bestandenen Prüfung. Klar, modern, stressfrei."
       />
       <PageHero
-        eyebrow="So läufts"
-        title="Vom Bock"
-        italic="bis zum Lappen."
+        eyebrow="Ablauf"
+        title="So läuft's."
         subtitle="Wir machen den Weg zum Führerschein klar, transparent und ehrlich. Vier Schritte – kein Drama."
       />
       <Steps />

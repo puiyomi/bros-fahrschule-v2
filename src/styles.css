@@ -202,3 +202,42 @@
   0%, 100% { transform: translate(0,0) scale(1); }
   50% { transform: translate(40px,-30px) scale(1.1); }
 }
+
+/* ---- Mobile performance optimizations (visually equivalent) ---- */
+
+/* Promote known animated/scroll-linked elements to their own layers
+   to avoid full-page repaints. Applied via utility class. */
+.gpu {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Limit paint scope of self-contained cards so blur/shadow don't
+   invalidate large areas of the page. */
+.glass {
+  contain: paint;
+}
+
+/* Lighten expensive filters on small screens — keeps the look,
+   but dramatically reduces GPU cost on phones. */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .glow {
+    box-shadow: 0 14px 50px -18px oklch(0.72 0.2 45 / 0.45);
+  }
+  .grain { opacity: 0.05; }
+}
+
+/* Respect reduced-motion: kill the floating orb keyframes entirely. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

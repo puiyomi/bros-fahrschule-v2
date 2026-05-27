@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import heroCar from "@/assets/hero-car.jpg";
 import motoRider from "@/assets/moto-rider.jpg";
 import {
@@ -6,6 +6,38 @@ import {
   motion, useScroll, useTransform, AnimatePresence,
 } from "./ui";
 import { reviews, why, courses, steps, team, faqs } from "./data";
+
+/* Plays only while on-screen, saving decode + GPU on mobile. */
+function LazyReelVideo({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          el.play().catch(() => {});
+        } else {
+          el.pause();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <video
+      ref={ref}
+      src={src}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+    />
+  );
+}
 
 /* -------------------------------- HOME HERO -------------------------------- */
 
@@ -78,7 +110,7 @@ export function Hero() {
         </div>
       </motion.div>
       <div className="absolute bottom-0 left-0 right-0 pb-4 overflow-hidden mask-fade-x">
-        <div className="flex gap-12 whitespace-nowrap" style={{ animation: "marquee 28s linear infinite" }}>
+        <div className="flex gap-12 whitespace-nowrap gpu" style={{ animation: "marquee 28s linear infinite" }}>
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="flex items-center gap-12 text-sm uppercase tracking-[0.3em] text-muted-foreground/60 font-display">
               <span>Stressfrei</span><span className="text-primary">●</span>
@@ -162,7 +194,7 @@ export function SocialProof() {
         </Reveal>
         <div className="space-y-5 mask-fade-x">
           {[reviews, [...reviews].reverse()].map((row, idx) => (
-            <div key={idx} className="flex gap-5 whitespace-nowrap" style={{ animation: `marquee ${idx === 0 ? 50 : 65}s linear infinite ${idx === 1 ? "reverse" : ""}` }}>
+            <div key={idx} className="flex gap-5 whitespace-nowrap gpu" style={{ animation: `marquee ${idx === 0 ? 50 : 65}s linear infinite ${idx === 1 ? "reverse" : ""}` }}>
               {[...row, ...row].map((r, i) => (
                 <div key={i} className="glass rounded-3xl p-6 w-[340px] shrink-0 whitespace-normal">
                   <div className="flex items-center gap-3 mb-3">
@@ -443,7 +475,7 @@ export function Reels() {
               whileHover={{ y: -10 }}
               className="snap-center shrink-0 w-[280px] sm:w-[340px] aspect-[9/16] rounded-[2.2rem] overflow-hidden relative glass glow group"
             >
-              <video src={src} autoPlay muted loop playsInline className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <LazyReelVideo src={src} />
               <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/10 to-background/50 pointer-events-none" />
               {/* top bar */}
               <div className="absolute top-4 left-4 right-4 flex items-center justify-between">

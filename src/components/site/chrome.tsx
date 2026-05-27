@@ -113,8 +113,17 @@ export function Navbar() {
   useEffect(() => {
     const f = () => setScrolled(window.scrollY > 20);
     f();
-    window.addEventListener("scroll", f);
-    return () => window.removeEventListener("scroll", f);
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        f();
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
     <header className={"fixed top-0 left-0 right-0 z-50 transition-all " + (scrolled ? "py-3" : "py-5")}>
