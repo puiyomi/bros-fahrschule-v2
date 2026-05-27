@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { Navbar, Footer, FloatingWhatsApp, Preloader, Grain, Cursor, ScrollProgress } from "@/components/site/chrome";
+import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./routes/index";
 import Ablauf from "./routes/ablauf";
 import Bewertungen from "./routes/bewertungen";
@@ -17,6 +18,7 @@ export default function App() {
       <Cursor />
       <ScrollProgress />
       <Navbar />
+      <ScrollToTop />
       <main>
         <Routes>
           <Route path="/" element={<Index />} />
